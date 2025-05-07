@@ -1,0 +1,25 @@
+{
+  "name": "lms-project",
+  "version": "0.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "start": "node dist/index.js",
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist",
+    "type-check": "tsc --noEmit"
+  },
+  "author": "Your Name",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "@lmstudio/sdk": "^0.0.12",
+    "@notionhq/client": "^2.2.15",
+    "@supabase/supabase-js": "^2.48.1"
+  },
+  "gitHead": "eb198b1c427b6efc59a0589aed998492ce039d77",
+  "devDependencies": {
+    "@types/node": "^20.11.24",
+    "typescript": "^5.4.5"
+  }
+}
