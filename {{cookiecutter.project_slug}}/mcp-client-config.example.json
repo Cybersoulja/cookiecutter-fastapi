@@ -1,0 +1,51 @@
+{% raw %}{
+  "mcpServers": {
+    "{{ cookiecutter.project_slug }}": {
+      "url": "https://mcp.yourdomain.com{{ cookiecutter.mcp_endpoint }}",
+      "transport": "sse",
+      "description": "{{ cookiecutter.project_short_description }}",
+      "env": {
+        "MCP_API_KEY": "your-secret-api-key-here"
+      },
+      "timeout": 60000,
+      "headers": {
+        "Authorization": "Bearer your-secret-api-key-here"
+      }
+    }
+  },
+  "notes": {
+    "setup": [
+      "1. Replace 'mcp.yourdomain.com' with your actual Cloudflare Tunnel domain",
+      "2. Generate a secure API key and update MCP_API_KEY",
+      "3. Ensure your Cloudflare Tunnel is running",
+      "4. Test connection with: curl https://mcp.yourdomain.com{{ cookiecutter.mcp_endpoint }}"
+    ],
+    "development": {
+      "local_url": "http://localhost:8000{{ cookiecutter.mcp_endpoint }}",
+      "temporary_tunnel": "Use 'cloudflared tunnel --url http://localhost:8000' for quick testing"
+    },
+    "security": [
+      "Enable Cloudflare Access for production deployments",
+      "Use service tokens or OAuth for authentication",
+      "Add WAF rules to protect the {{ cookiecutter.mcp_endpoint }} endpoint",
+      "Configure rate limiting to prevent abuse"
+    ]
+  },
+  "available_tools": [
+    {
+      "name": "predict",
+      "description": "Execute ML model prediction with provided features",
+      "example": {
+        "features": [1.5, 2.3, 4.1, 0.8]
+      }
+    },
+    {
+      "name": "health_check",
+      "description": "Check server and model health status"
+    },
+    {
+      "name": "get_model_info",
+      "description": "Get information about the loaded ML model"
+    }
+  ]
+}{% endraw %}

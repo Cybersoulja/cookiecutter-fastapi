@@ -1,0 +1,51 @@
+{% raw %}# SystemD service file for MCP Server
+#
+# Installation:
+# 1. Copy this file: sudo cp deployment/mcp-server.service.example /etc/systemd/system/{{ cookiecutter.project_slug }}-mcp.service
+# 2. Edit the file and update paths and user
+# 3. Reload systemd: sudo systemctl daemon-reload
+# 4. Enable service: sudo systemctl enable {{ cookiecutter.project_slug }}-mcp
+# 5. Start service: sudo systemctl start {{ cookiecutter.project_slug }}-mcp
+# 6. Check status: sudo systemctl status {{ cookiecutter.project_slug }}-mcp
+
+[Unit]
+Description={{ cookiecutter.project_name }} MCP Server
+After=network.target
+
+[Service]
+Type=simple
+User=YOUR_USERNAME
+Group=YOUR_GROUP
+WorkingDirectory=/path/to/{{ cookiecutter.project_slug }}
+
+# Environment variables
+Environment="PATH=/path/to/{{ cookiecutter.project_slug }}/.venv/bin:/usr/local/bin:/usr/bin:/bin"
+Environment="PYTHONPATH=/path/to/{{ cookiecutter.project_slug }}/app"
+EnvironmentFile=/path/to/{{ cookiecutter.project_slug }}/.env
+
+# Command to start MCP server
+ExecStart=/path/to/{{ cookiecutter.project_slug }}/.venv/bin/gunicorn \
+    mcp_main:app \
+    -w 4 \
+    -k uvicorn.workers.UvicornWorker \
+    -b 127.0.0.1:8000 \
+    --timeout 120 \
+    --access-logfile /var/log/{{ cookiecutter.project_slug }}/access.log \
+    --error-logfile /var/log/{{ cookiecutter.project_slug }}/error.log
+
+# Restart policy
+Restart=always
+RestartSec=10
+
+# Resource limits
+LimitNOFILE=65536
+
+# Security hardening
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/path/to/{{ cookiecutter.project_slug }}/logs
+
+[Install]
+WantedBy=multi-user.target{% endraw %}

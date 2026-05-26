@@ -1,0 +1,91 @@
+{% raw %}# Docker Compose configuration for MCP Server
+#
+# Usage:
+#   Development: docker-compose -f docker-compose.mcp.yml up
+#   Production:  docker-compose -f docker-compose.mcp.yml up -d
+#
+# Note: This runs the MCP server on localhost:8000
+# For remote access, set up a Cloudflare Tunnel pointing to this container
+
+version: '3.8'
+
+services:
+  mcp-server:
+    build:
+      context: .
+      dockerfile: Dockerfile.mcp
+    container_name: {{ cookiecutter.project_slug }}-mcp
+    restart: unless-stopped
+
+    ports:
+      - "8000:8000"
+
+    environment:
+      - PYTHONPATH=/app
+      - MODEL_PATH={{ cookiecutter.machine_learn_model_path }}
+      - MODEL_NAME={{ cookiecutter.machine_learn_model_name }}
+      - MCP_SERVER_NAME={{ cookiecutter.mcp_server_name }}
+      - MCP_ENDPOINT={{ cookiecutter.mcp_endpoint }}
+
+    env_file:
+      - .env
+
+    volumes:
+      # Mount ML models
+      - ./ml/model:/app/ml/model:ro
+
+      # Mount logs
+      - ./logs:/app/logs
+
+      # Development: mount source for hot reload
+      # - ./app:/app/app
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+    networks:
+      - mcp-network
+
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+
+  # Optional: Cloudflare Tunnel as a sidecar
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: {{ cookiecutter.project_slug }}-tunnel
+    restart: unless-stopped
+
+    command: tunnel --no-autoupdate run --token ${CLOUDFLARE_TUNNEL_TOKEN}
+
+    environment:
+      - TUNNEL_TOKEN=${CLOUDFLARE_TUNNEL_TOKEN}
+
+    depends_on:
+      - mcp-server
+
+    networks:
+      - mcp-network
+
+    # Uncomment for named tunnel with config file
+    # volumes:
+    #   - ./cloudflared:/etc/cloudflared
+    # command: tunnel --config /etc/cloudflared/config.yml run
+
+networks:
+  mcp-network:
+    driver: bridge
+
+volumes:
+  logs:
+    driver: local{% endraw %}

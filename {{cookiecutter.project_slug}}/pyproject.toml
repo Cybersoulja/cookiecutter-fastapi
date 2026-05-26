@@ -27,6 +27,14 @@ optional = true
 [tool.poetry.group.aws.dependencies]
 mangum = "^0.17.0"
 
+[tool.poetry.group.mcp]
+optional = true
+
+[tool.poetry.group.mcp.dependencies]
+mcp = "^1.0.0"
+sse-starlette = "^2.0.0"
+httpx = "^0.27.0"
+
 [build-system]
 requires = ["poetry>=0.12"]
 build-backend = "poetry.masonry.api"

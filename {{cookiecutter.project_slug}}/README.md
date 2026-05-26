@@ -47,6 +47,54 @@ make install
 
 > <http://localhost:8080/redoc>
 
+{% if cookiecutter.enable_mcp_server == 'yes' %}
+## MCP Server (Model Context Protocol)
+
+This project includes MCP server support for remote AI client integration via Cloudflare Tunnels.
+
+### Quick Start
+
+```sh
+# Install MCP dependencies
+make install-mcp
+
+# Run MCP server
+make run-mcp
+```
+
+The MCP endpoint will be available at: `http://localhost:8000{{ cookiecutter.mcp_endpoint }}`
+
+### Cloudflare Tunnel Setup
+
+For remote access:
+
+```sh
+# Development (temporary tunnel)
+make tunnel-dev
+
+# Production (named tunnel)
+cloudflared tunnel create {{ cookiecutter.project_slug }}-mcp
+cloudflared tunnel route dns {{ cookiecutter.project_slug }}-mcp mcp.yourdomain.com
+```
+
+### Available MCP Tools
+
+- `predict` - Execute ML model predictions
+- `health_check` - Check server and model health
+- `get_model_info` - Get model metadata
+
+### Documentation
+
+See [docs/MCP_CLOUDFLARE_SETUP.md](docs/MCP_CLOUDFLARE_SETUP.md) for complete setup guide.
+
+### Configuration Examples
+
+- `cloudflared-config.example.yml` - Cloudflare Tunnel configuration
+- `mcp-client-config.example.json` - MCP client configuration
+- `examples/mcp_client_example.py` - Python client example
+
+{% endif %}
+
 ## Project structure
 
 Files related to application are in the `app` or `tests` directories.
