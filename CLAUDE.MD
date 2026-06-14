@@ -4,6 +4,21 @@
 
 This is **cookiecutter-fastapi**, a Cookiecutter template for generating FastAPI projects with built-in machine learning model serving capabilities. It provides a production-ready boilerplate for building ML-powered APIs.
 
+### 🤖 AI Agent for Project Generation
+
+This repository includes an **AI-powered agent** (`fastapi_cloudflare_agent.py`) that uses Claude API to help users:
+- Generate FastAPI projects through natural language conversation
+- Set up MCP (Model Context Protocol) server integration for Claude Desktop
+- Configure Cloudflare deployment (Workers, Tunnels)
+- Get intelligent guidance through the development process
+
+The agent uses:
+- **Claude Opus 4.8** with adaptive thinking for complex reasoning
+- **Tool use** to execute cookiecutter, configure MCP, and set up deployments
+- **Conversational interface** for natural interaction
+
+See `AGENT_README.md` for full documentation.
+
 ## Repository Type
 
 This is a **template repository** using Cookiecutter. It is not a runnable application itself, but rather a template that generates FastAPI projects. The actual project structure is in `{{cookiecutter.project_slug}}/` and uses Jinja2 templating syntax.
@@ -191,6 +206,40 @@ When contributing to this template:
 - Cookiecutter Documentation: https://cookiecutter.readthedocs.io/
 - Poetry Documentation: https://python-poetry.org/docs/
 
+## AI Agent Architecture
+
+The `fastapi_cloudflare_agent.py` implements a tool-using agent with:
+
+### Agent Tools
+1. **generate_fastapi_project**: Uses cookiecutter to generate projects
+2. **setup_mcp_server**: Adds MCP endpoints for Claude Desktop integration
+3. **configure_cloudflare_deployment**: Sets up Workers/Tunnel deployment
+4. **install_dependencies**: Poetry installation
+5. **run_local_server**: Development server instructions
+6. **get_project_status**: Project health check
+
+### MCP Server Integration
+The agent can configure projects as MCP servers that Claude Desktop connects to:
+- Adds `/mcp/sse` endpoint for Server-Sent Events transport
+- Adds `/mcp/tools` endpoint for tool discovery
+- Generates `claude_desktop_config.json` for Claude Desktop
+- Supports Cloudflare Tunnel for remote access
+
+### Cloudflare Deployment Options
+- **Tunnel**: Secure exposure of local development servers (no port opening)
+- **Workers**: Serverless deployment using Mangum adapter
+- **Pages**: Static + Functions (future support)
+
+### Extensibility
+The agent can be extended with custom tools (see `examples/custom_agent.py`):
+```python
+class CustomAgent(FastAPICloudflareAgent):
+    def get_tools(self):
+        tools = super().get_tools()
+        tools.append({...})  # Add custom tool
+        return tools
+```
+
 ## Notes for AI Assistants
 
 - This is a **template repository**, not a deployable application
@@ -199,3 +248,8 @@ When contributing to this template:
 - Always consider the impact on generated projects
 - Test template generation when making significant changes
 - The `_copy_without_render` in cookiecutter.json prevents certain files from being processed
+- The **FastAPI Cloudflare Agent** (`fastapi_cloudflare_agent.py`) is a separate tool that **uses** this template
+  - It's not part of the generated projects
+  - It's a development tool for creating and configuring projects
+  - Uses Claude API with tool use pattern
+  - Demonstrates integration of cookiecutter with AI agents

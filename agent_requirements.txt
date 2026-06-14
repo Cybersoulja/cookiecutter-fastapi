@@ -1,0 +1,6 @@
+# FastAPI Cookiecutter Agent for Cloudflare
+# Install with: pip install -r agent_requirements.txt
+
+anthropic>=0.40.0
+cookiecutter>=2.6.0
+pyyaml>=6.0.0
